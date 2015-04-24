@@ -5,18 +5,20 @@ var listViewStyles = require('../styles/listView');
 var {
   StyleSheet,
   PixelRatio,
+  TouchableHighlight,
   View,
-  Text
+  Text,
 } = React;
 
 var Location = React.createClass({
-
   render: function() {
     return (
       <View>
-        <View style={styles.row}>
-          <Text>{this.props.title}</Text>
-        </View>
+        <TouchableHighlight onPress={this.props.handleLocationSelect}>
+          <View style={styles.row}>
+            <Text>{this.props.title}</Text>
+          </View>
+        </TouchableHighlight>
         <View style={styles.separator} />
       </View>
     );

@@ -3,6 +3,7 @@ var _ = require('lodash');
 var api = require('../utils/api');
 
 var Location = require('./Location');
+var Beers = require('./Beers');
 
 var {
   StyleSheet,
@@ -26,15 +27,23 @@ var Locations = React.createClass({
 
   componentDidMount: function() {
     api.fetchStores().then((data) => {
-      var locations = _.map(data, (v, k) => {
+      var locations = _(data).map((v, k) => {
         return { slug: k, title: v };
-      });
+      }).sortBy('title').value();
 
       this.setState({
         isLoading: false,
         dataSource: ds.cloneWithRows(locations)
       });
     }).done();
+  },
+
+  _handleLocationSelect: function(location) {
+    this.props.navigator.push({
+      title: location.title,
+      component: Beers,
+      passProps: {location},
+    });
   },
 
   render: function() {
@@ -47,7 +56,9 @@ var Locations = React.createClass({
         ) : (
           <ListView
             dataSource={this.state.dataSource}
-            renderRow={(loc) => <Location {...loc} />}
+            renderRow={(loc) => {
+              return <Location handleLocationSelect={() => this._handleLocationSelect(loc)} {...loc} />
+            }}
             initialListSize={100}
           />
         )}
