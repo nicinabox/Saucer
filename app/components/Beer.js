@@ -43,7 +43,9 @@ var Beer = React.createClass({
     return (
       <View style={styles.container}>
         {this.state.isLoading ? (
-          <ActivityIndicatorIOS animating={this.state.isLoading} />
+          <ActivityIndicatorIOS
+            style={styles.centered}
+            animating={this.state.isLoading} />
         ) : (
           <View>
             {this.renderRow('Style', this.state.beer.style)}
@@ -90,6 +92,11 @@ var styles = StyleSheet.create({
   separator: {
     height: 1 / PixelRatio.get(),
     backgroundColor: '#dddddd',
+  },
+  centered: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
   },
 });
 
