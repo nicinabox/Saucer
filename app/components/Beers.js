@@ -82,7 +82,7 @@ var Beers = React.createClass({
               renderRow={(beer) => {
                 return <ListItem onPress={() => this._handleBeerSelect(beer)} text={beer.name} />
               }}
-              initialListSize={400}
+              initialListSize={50}
             />
           </View>
         )}
