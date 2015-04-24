@@ -9,6 +9,11 @@ var api = {
   fetchBeers: function (slug) {
     return fetch(`${HOST}/stores/${slug}/beers`)
       .then((resp) => resp.json());
+  },
+
+  fetchBeer: function (id) {
+    return fetch(`${HOST}/beers/${id}`)
+      .then((resp) => resp.json());
   }
 };
 

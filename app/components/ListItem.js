@@ -14,7 +14,7 @@ var Location = React.createClass({
   render: function() {
     return (
       <View>
-        <TouchableHighlight onPress={this.props.handleLocationSelect}>
+        <TouchableHighlight onPress={this.props.onPress}>
           <View style={styles.row}>
             <Text>{this.props.text}</Text>
           </View>

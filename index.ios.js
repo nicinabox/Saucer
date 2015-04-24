@@ -18,7 +18,7 @@ var Saucer = React.createClass({
         style={styles.container}
         initialRoute={{
           component: Locations,
-          title: 'Locations'
+          title: 'Flying Saucers'
         }}
       />
     );
