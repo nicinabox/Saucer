@@ -55,7 +55,7 @@ var Beer = React.createClass({
             {this.renderRow('Container', this.state.beer.container)}
 
             <View style={styles.description}>
-              <Text>
+              <Text style={styles.descriptionText}>
                 {this.state.beer.description}
               </Text>
             </View>
@@ -75,6 +75,10 @@ var styles = StyleSheet.create({
   description: {
     paddingHorizontal: 15,
     paddingVertical: 10,
+  },
+  descriptionText: {
+    fontSize: 16,
+    lineHeight: 16 * 1.4,
   },
   row: {
     paddingVertical: 10,
