@@ -18,19 +18,38 @@ var ds = new ListView.DataSource({
 });
 
 var Locations = React.createClass({
+  watchId: null,
+
   getInitialState: function() {
     return {
       isLoading: true,
+      position: {},
       dataSource: ds
     };
   },
 
   componentDidMount: function() {
-    api.fetchStores().then((data) => {
-      var locations = _(data).map((v, k) => {
-        return { slug: k, title: v };
-      }).sortBy('title').value();
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        this._fetchLocations();
+        this.setState({position});
+      },
+      (error) => console.error(error)
+    );
 
+    this.watchID = navigator.geolocation.watchPosition((position) => {
+      this.setState({position});
+    });
+
+
+  },
+
+  componentWillUnmount: function() {
+    navigator.geolocation.clearWatch(this.watchID);
+  },
+
+  _fetchLocations: function () {
+    api.fetchStores().then((locations) => {
       this.setState({
         isLoading: false,
         dataSource: ds.cloneWithRows(locations)
