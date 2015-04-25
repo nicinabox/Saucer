@@ -40,7 +40,7 @@ var Locations = React.createClass({
 
   _handleLocationSelect: function(location) {
     this.props.navigator.push({
-      title: location.title,
+      title: location.name,
       component: Beers,
       passProps: {location},
     });

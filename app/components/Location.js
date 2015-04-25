@@ -16,7 +16,7 @@ var Location = React.createClass({
       <View>
         <TouchableHighlight onPress={this.props.handleLocationSelect}>
           <View style={styles.row}>
-            <Text>{this.props.title}</Text>
+            <Text>{this.props.name}</Text>
           </View>
         </TouchableHighlight>
         <View style={styles.separator} />

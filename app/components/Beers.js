@@ -29,11 +29,7 @@ var Beers = React.createClass({
   },
 
   componentDidMount: function() {
-    api.fetchBeers(this.props.location.slug).then((data) => {
-      var beers = _(data).map((v, k) => {
-        return { id: k, name: v };
-      }).sortBy('name').value();
-
+    api.fetchBeers(this.props.location.slug).then((beers) => {
       this.setState({
         beers: beers,
         isLoading: false,
