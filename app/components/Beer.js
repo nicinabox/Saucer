@@ -6,6 +6,7 @@ var {
   ActivityIndicatorIOS,
   StyleSheet,
   PixelRatio,
+  ScrollView,
   View,
   Text,
 } = React;
@@ -47,19 +48,22 @@ var Beer = React.createClass({
             style={styles.centered}
             animating={this.state.isLoading} />
         ) : (
-          <View>
+          <ScrollView
+              style={styles.details}
+              automaticallyAdjustContentInsets={false}>
             {this.renderRow('Style', this.state.beer.style)}
             {this.renderRow('Brewer', this.state.beer.brewer)}
             {this.renderRow('City', this.state.beer.city)}
             {this.renderRow('Country', this.state.beer.country)}
             {this.renderRow('Container', this.state.beer.container)}
 
-            <View style={styles.description}>
+            <View
+              style={styles.description}>
               <Text style={styles.descriptionText}>
                 {this.state.beer.description}
               </Text>
             </View>
-          </View>
+          </ScrollView>
         )}
 
       </View>
@@ -71,6 +75,9 @@ var styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 75,
+  },
+  details: {
+    flex: 1,
   },
   description: {
     paddingHorizontal: 15,
