@@ -16,7 +16,8 @@ var {
 } = React;
 
 var ds = new ListView.DataSource({
-  rowHasChanged: (r1, r2) => r1 !== r2
+  rowHasChanged: (r1, r2) => r1 !== r2,
+  sectionHeaderHasChanged: (h1, h2) => h1 !== h2
 });
 
 var Beers = React.createClass({
@@ -30,10 +31,19 @@ var Beers = React.createClass({
 
   componentDidMount: function() {
     api.fetchBeers(this.props.location.slug).then((beers) => {
+      var groupedBeers = _.groupBy(beers, function(beer) {
+        var character = beer.name.substr(0, 1);
+        if (_.isNumber(+character) && !_.isNaN(+character)) {
+          return '#';
+        } else {
+          return character;
+        }
+      });
+
       this.setState({
         beers: beers,
         isLoading: false,
-        dataSource: ds.cloneWithRows(beers)
+        dataSource: ds.cloneWithRowsAndSections(groupedBeers)
       });
     }).done();
   },
@@ -53,6 +63,16 @@ var Beers = React.createClass({
       component: Beer,
       passProps: {beer},
     });
+  },
+
+   _renderSectionHeader: function(data, section) {
+    return (
+      <View style={styles.sectionHeader}>
+        <Text style={styles.sectionHeaderTitle}>
+          {section.toUpperCase()}
+        </Text>
+      </View>
+    );
   },
 
   render: function() {
@@ -75,8 +95,9 @@ var Beers = React.createClass({
             <ListView
               dataSource={this.state.dataSource}
               automaticallyAdjustContentInsets={false}
-              renderRow={(beer) => {
-                return <ListItem onPress={() => this._handleBeerSelect(beer)} text={beer.name} />
+              renderSectionHeader={this._renderSectionHeader}
+              renderRow={(beer, i) => {
+                return <ListItem key={i} onPress={() => this._handleBeerSelect(beer)} text={beer.name} />
               }}
               initialListSize={50}
             />
@@ -96,6 +117,15 @@ var styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     flex: 1,
+  },
+  sectionHeader: {
+    paddingVertical: 5,
+    paddingHorizontal: 15,
+    backgroundColor: '#f7f7f7',
+  },
+  sectionHeaderTitle: {
+    fontWeight: '500',
+    fontSize: 13,
   },
   searchRow: {
     backgroundColor: '#f7f7f7',
