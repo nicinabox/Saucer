@@ -1,6 +1,7 @@
 var React = require('react-native');
 var _ = require('lodash');
 var api = require('../utils/api');
+var listViewStyles = require('../styles/listView');
 
 var Location = require('./Location');
 var Beers = require('./Beers');
@@ -14,11 +15,13 @@ var {
 } = React;
 
 var ds = new ListView.DataSource({
-  rowHasChanged: (r1, r2) => r1 !== r2
+  rowHasChanged: (r1, r2) => r1 !== r2,
+  sectionHeaderHasChanged: (h1, h2) => h1 !== h2
 });
 
 var Locations = React.createClass({
   watchId: null,
+  position: {},
 
   getInitialState: function() {
     return {
@@ -31,17 +34,15 @@ var Locations = React.createClass({
   componentDidMount: function() {
     navigator.geolocation.getCurrentPosition(
       (position) => {
+        this.position = position;
         this._fetchLocations();
-        this.setState({position});
       },
       (error) => console.error(error)
     );
 
     this.watchID = navigator.geolocation.watchPosition((position) => {
-      this.setState({position});
+      this.position = position;
     });
-
-
   },
 
   componentWillUnmount: function() {
@@ -49,12 +50,21 @@ var Locations = React.createClass({
   },
 
   _fetchLocations: function () {
-    api.fetchStores().then((locations) => {
+    var coords = {
+      latitude: this.position.coords.latitude,
+      longitude: this.position.coords.longitude,
+    };
+
+    Promise.all([api.fetchStores(), api.fetchNearbyStores(coords)])
+    .then((values) => {
       this.setState({
         isLoading: false,
-        dataSource: ds.cloneWithRows(locations)
+        dataSource: ds.cloneWithRowsAndSections({
+          closest: [values[1]],
+          all: values[0]
+        })
       });
-    }).done();
+    });
   },
 
   _handleLocationSelect: function(location) {
@@ -63,6 +73,16 @@ var Locations = React.createClass({
       component: Beers,
       passProps: {location},
     });
+  },
+
+  _renderSectionHeader: function(data, section) {
+    return (
+      <View style={styles.sectionHeader}>
+        <Text style={styles.sectionHeaderTitle}>
+          {section.replace('_', ' ').toUpperCase()}
+        </Text>
+      </View>
+    );
   },
 
   render: function() {
@@ -75,6 +95,7 @@ var Locations = React.createClass({
         ) : (
           <ListView
             dataSource={this.state.dataSource}
+            renderSectionHeader={this._renderSectionHeader}
             renderRow={(loc) => {
               return <Location handleLocationSelect={() => this._handleLocationSelect(loc)} {...loc} />
             }}
@@ -87,7 +108,7 @@ var Locations = React.createClass({
 
 });
 
-var styles = StyleSheet.create({
+var styles = StyleSheet.create(_.merge({}, listViewStyles, {
   container: {
     flex: 1,
   },
@@ -96,7 +117,7 @@ var styles = StyleSheet.create({
     justifyContent: 'center',
     flex: 1,
   },
-});
+}));
 
 
 module.exports = Locations;
