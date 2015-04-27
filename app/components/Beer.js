@@ -29,6 +29,8 @@ var Beer = React.createClass({
   },
 
   renderRow: function (label, value) {
+    if (!value) return;
+
     return (
       <View>
         <View style={styles.row}>
